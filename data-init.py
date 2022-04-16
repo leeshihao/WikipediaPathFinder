@@ -13,7 +13,7 @@ def getPageIdFromTitle(title):
 
 def getAllPageLinks(id):
     try:
-        apiReqUrl = 'https://en.wikipedia.org/w/api.php?action=query&format=json&pageids={}&generator=linkshere&formatversion=2&glhprop=title&glhlimit=20'.format(id)
+        apiReqUrl = 'https://en.wikipedia.org/w/api.php?action=query&format=json&pageids={}&generator=linkshere&formatversion=2&glhprop=title&glhlimit=500'.format(id)
         r = requests.get(apiReqUrl)
         return r.json()['query']['pages']
     except:
@@ -37,19 +37,15 @@ def generateGraph(title):
         if level >= MAX_LEVEL:
             return
         for node in graphNodes:
+            print(node)
             graphNodes[node] = getNodesFromPages(getAllPageLinks(node))
             addNodes(level+1,graphNodes[node])
     addNodes(0,graph)
     return graph
 
 
-
 startUrl = 'Stanford University'
 endUrl = 'Harvard University'
-startId = getPageIdFromTitle(startUrl)
-endId = getPageIdFromTitle(endUrl)
-print(endId)
-visitedSet = set()
-
-generateGraph(startUrl)
-
+#generateGraph(startUrl)
+print(getAllPageLinks(700))
+print('done')
