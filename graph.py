@@ -17,14 +17,15 @@ def create_graph(start_node, layers, nodes_per_layer):
     layers -= 1
     if layers == 0:
         return start_node
-
+    if start_node.val == 'deadend':
+        return start_node
     url = 'https://en.wikipedia.org/wiki/' + start_node.val
     try:
         res = requests.get(url)
         res.raise_for_status()
     except requests.exceptions.HTTPError as e:
         print(e,'\nThe url connected with the error:' ,url)
-        return None
+        return Node('deadend')
     else:
         content = str(res.content)
         links = set(re.findall("\"/wiki/([^\":]*)\"",content))
@@ -43,4 +44,4 @@ def create_graph(start_node, layers, nodes_per_layer):
 start_node = Node(startArticle)
 
 graph = create_graph(start_node,3,10)
-print(graph.connected_nodes)
+print(graph.val)
