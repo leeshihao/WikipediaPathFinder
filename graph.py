@@ -1,11 +1,16 @@
 import requests
 import re
+#import spacy
+#nlp = spacy.load('en_core_web_md')
+
+
 startArticle = "Stanford_University"
 
 class Node:
     def __init__(self,val):
         self.val = val
         self.connected_nodes = {}
+        self.weight = 0
     def add_node(self,node):
         if node.val in self.connected_nodes:
             return None
@@ -48,10 +53,26 @@ class Node:
                 chain.append(curr_chain)
                 visited.add(node.val)
         return False 
+    def generateWeights(self):
+        visited = set()
+        def dfs(visited, graph, node):
+            if node.val not in visited:
+                print(node.val)
+                visited.add(node.val)
+                for adj in graph:
+                    neighbor = graph[adj]
+                    tokens = nlp("{} {}".format(node.val, neighbor.val))
+                    parentWord, childWord = tokens[0], tokens[1]
+                    neighbor.weight = parentWord.similarity(childWord)
+                    # create "fuzzy" word connections
+                    print(neighbor.weight)
+                    dfs(visited, neighbor.connected_nodes, neighbor)
+        dfs(visited,self.connected_nodes,self)
+        
+
             
         
 def create_graph(start_node, layers, nodes_per_layer):
-    
     layers -= 1
     if layers == 0:
         return start_node
@@ -82,6 +103,7 @@ def create_graph(start_node, layers, nodes_per_layer):
 start_node = Node(startArticle)
 
 graph = create_graph(start_node,5,2)
-print(graph.val)
+#print(graph.val)
 
-graph.BFS_Find_Path('Language')
+#graph.generateWeights()
+
